@@ -27,3 +27,5 @@ o/
 *.tar
 *.zip
 
+src/Utility/SMS/channel_cycliner.2dm
+src/Utility/SMS/hgrid.gr3
