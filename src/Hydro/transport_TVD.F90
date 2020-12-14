@@ -11,6 +11,10 @@
 !   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 !   See the License for the specific language governing permissions and
 !   limitations under the License.
+!
+!   modified by stli to consider the flux in the outflow boundaries 
+!   for tracers, 2020-11-12
+!
 
 !===============================================================================
 !===============================================================================
@@ -868,8 +872,11 @@
               if(idry_e(iel)==1) cycle
               trel_tmp_outside(:)=trel_tmp(:,k,iel)
             else !bnd side
-              if(isbs(jsj)<=0.or.k>=kbs(jsj)+1.and.ssign(j,i)*flux_mod_hface(1,k,jsj)>=0) cycle
-       
+! stli              if(isbs(jsj)<=0.or.k>=kbs(jsj)+1.and.ssign(j,i)*flux_mod_hface(1,k,jsj)>=0) cycle
+              if(isbs(jsj)<=0) then !interior or land
+                 cycle
+			  else if(k>=kbs(jsj)+1.and.ssign(j,i)*flux_mod_hface(1,k,jsj)<0) then ! inflow
+
               !Open bnd side with _inflow_; compute trel_tmp from outside and save it as trel_tmp_outside(1:ntr)
               ibnd=isbs(jsj) !global bnd #
               !Find node indices on bnd segment for the 2 nodes (for type 4 b.c.)
@@ -914,6 +921,7 @@
                   endif !itrtype
                 enddo !ll  
               enddo !jj  
+			  endif ! isbs(jsj)<=0
             endif !iel
 
             if(k>=kbs(jsj)+1.and.ssign(j,i)*flux_mod_hface(1,k,jsj)<0) then !inflow
